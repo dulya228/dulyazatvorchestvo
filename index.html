@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Дуля за творчество - Музыкальное сообщество</title>
     <style>
+        /* ... все стили из предыдущей версии ... */
         * {
             margin: 0;
             padding: 0;
@@ -23,7 +24,6 @@
             padding: 20px;
         }
         
-        /* Навигация */
         .nav-bar {
             background: white;
             border-radius: 15px;
@@ -65,7 +65,6 @@
             color: white;
         }
         
-        /* Главная страница */
         .hero {
             background: white;
             border-radius: 20px;
@@ -85,7 +84,6 @@
             font-size: 18px;
         }
         
-        /* Альбомы и треки */
         .albums-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -137,7 +135,6 @@
             color: #999;
         }
         
-        /* Страница трека */
         .track-page {
             background: white;
             border-radius: 20px;
@@ -197,17 +194,11 @@
             margin-bottom: 15px;
         }
         
-        /* Аудиоплеер */
         .audio-player {
             background: #f8f9fa;
             border-radius: 15px;
             padding: 20px;
             margin: 20px 0;
-        }
-        
-        audio {
-            width: 100%;
-            margin-bottom: 15px;
         }
         
         .player-controls {
@@ -229,16 +220,6 @@
             transition: transform 0.3s;
         }
         
-        .play-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .time-info {
-            font-family: monospace;
-            font-size: 14px;
-        }
-        
-        /* Оценки */
         .ratings-section {
             background: #f8f9fa;
             border-radius: 15px;
@@ -254,17 +235,12 @@
             border-bottom: 1px solid #e0e0e0;
         }
         
-        .avg-score {
-            text-align: center;
-        }
-        
         .avg-score-number {
             font-size: 48px;
             font-weight: bold;
             color: #667eea;
         }
         
-        /* Форма оценки */
         .rating-form {
             background: white;
             border-radius: 15px;
@@ -312,7 +288,6 @@
             margin-top: 10px;
         }
         
-        /* Чарт */
         .chart-container {
             background: white;
             border-radius: 20px;
@@ -399,33 +374,34 @@
             font-size: 18px;
         }
         
-        .chart-rating-count {
-            font-size: 12px;
-            color: #999;
-        }
-        
-        /* Скрытые элементы */
         .hidden {
             display: none;
         }
         
-        /* Адаптивность */
+        .migration-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 12px;
+        }
+        
         @media (max-width: 768px) {
             .nav-bar {
                 flex-direction: column;
                 text-align: center;
             }
-            
             .track-header {
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
             }
-            
             .rating-stats {
                 flex-direction: column;
             }
-            
             .chart-item {
                 flex-wrap: wrap;
             }
@@ -434,7 +410,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Навигация -->
         <div class="nav-bar">
             <div class="logo">🎵 Дуля за творчество</div>
             <div class="nav-links">
@@ -445,11 +420,11 @@
             </div>
         </div>
         
-        <!-- Главная страница -->
         <div id="home-page">
             <div class="hero">
                 <h1>🎵 Музыкальное сообщество</h1>
                 <p>Оценивайте треки, создавайте альбомы и делитесь впечатлениями</p>
+                <button id="migrate-btn" class="migration-btn" style="margin-top: 15px;">🔄 Восстановить старые треки</button>
             </div>
             
             <h2 style="color: white; margin-bottom: 20px;">⭐ Топ-5 недели</h2>
@@ -459,7 +434,6 @@
             <div id="latest-albums" class="albums-grid"></div>
         </div>
         
-        <!-- Страница чарта -->
         <div id="chart-page" class="hidden">
             <div class="chart-container">
                 <div class="chart-header">
@@ -474,7 +448,6 @@
             </div>
         </div>
         
-        <!-- Страница альбомов -->
         <div id="albums-page" class="hidden">
             <div class="track-page">
                 <button class="back-button" onclick="showPage('home')">← На главную</button>
@@ -483,12 +456,10 @@
             </div>
         </div>
         
-        <!-- Страница трека -->
         <div id="track-page" class="hidden">
             <div class="track-page" id="track-content"></div>
         </div>
         
-        <!-- Страница моих оценок -->
         <div id="my-ratings-page" class="hidden">
             <div class="track-page">
                 <button class="back-button" onclick="showPage('home')">← На главную</button>
@@ -498,13 +469,11 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 
     <script>
-        // Firebase конфигурация
         const firebaseConfig = {
             apiKey: "AIzaSyCfMUhNeaty-xjfXq8NlmnEcozI0eoI19c",
             authDomain: "dulyazatvorchestvo.firebaseapp.com",
@@ -523,55 +492,121 @@
         let currentTrack = null;
         let previousPage = 'home';
         
-        // Пример данных для демонстрации
-        const sampleAlbums = [
-            {
-                id: "album1",
-                title: "Ночной дозор",
-                artist: "Макс Корж",
-                cover: "🌙",
-                year: 2024,
-                tracks: [
-                    { id: "track1", title: "Малиновый закат", duration: "3:45" },
-                    { id: "track2", title: "Танцы на крыше", duration: "4:12" },
-                    { id: "track3", title: "Город спит", duration: "3:58" }
-                ]
-            },
-            {
-                id: "album2",
-                title: "Цветы",
-                artist: "Miyagi & Эндшпиль",
-                cover: "🌸",
-                year: 2024,
-                tracks: [
-                    { id: "track4", title: "I Got Love", duration: "4:20" },
-                    { id: "track5", title: "Minor", duration: "3:55" }
-                ]
-            },
-            {
-                id: "album3",
-                title: "По волнам",
-                artist: "Баста",
-                cover: "🌊",
-                year: 2023,
-                tracks: [
-                    { id: "track6", title: "Сансара", duration: "5:30" },
-                    { id: "track7", title: "Выпускной", duration: "4:15" }
-                ]
-            }
-        ];
-        
-        // Сохранение альбомов в Firebase
-        async function initSampleData() {
-            const albumsRef = await db.collection('albums').get();
-            if (albumsRef.empty) {
-                for (const album of sampleAlbums) {
-                    await db.collection('albums').doc(album.id).set(album);
+        // МИГРАЦИЯ: Перенос старых треков и оценок в новую структуру
+        async function migrateOldData() {
+            console.log("Начинаем миграцию данных...");
+            
+            try {
+                // 1. Получаем все старые оценки из коллекции ratings
+                const ratingsSnapshot = await db.collection('ratings').get();
+                const oldRatings = [];
+                ratingsSnapshot.forEach(doc => oldRatings.push({ id: doc.id, ...doc.data() }));
+                
+                if (oldRatings.length === 0) {
+                    console.log("Нет старых оценок для миграции");
+                    alert("Старых оценок не найдено");
+                    return;
                 }
+                
+                console.log(`Найдено ${oldRatings.length} старых оценок`);
+                
+                // 2. Группируем оценки по трекам
+                const tracksMap = new Map();
+                for (const rating of oldRatings) {
+                    const trackKey = `${rating.trackArtist}_${rating.trackTitle}`;
+                    if (!tracksMap.has(trackKey)) {
+                        tracksMap.set(trackKey, {
+                            id: rating.trackId,
+                            title: rating.trackTitle,
+                            artist: rating.trackArtist,
+                            ratings: []
+                        });
+                    }
+                    tracksMap.get(trackKey).ratings.push(rating);
+                }
+                
+                // 3. Создаем альбом "Разное" для всех старых треков
+                const miscAlbumRef = db.collection('albums').doc('misc_album');
+                const miscAlbumDoc = await miscAlbumRef.get();
+                
+                let existingTracks = [];
+                if (miscAlbumDoc.exists) {
+                    existingTracks = miscAlbumDoc.data().tracks || [];
+                }
+                
+                // 4. Добавляем треки в альбом "Разное"
+                const newTracks = [];
+                for (const [key, track] of tracksMap) {
+                    // Проверяем, не добавлен ли уже трек
+                    const trackExists = existingTracks.some(t => t.id === track.id);
+                    if (!trackExists) {
+                        newTracks.push({
+                            id: track.id,
+                            title: track.title,
+                            duration: "3:30",
+                            audioUrl: ""
+                        });
+                    }
+                }
+                
+                const updatedTracks = [...existingTracks, ...newTracks];
+                
+                await miscAlbumRef.set({
+                    id: "misc_album",
+                    title: "🎵 Разные треки",
+                    artist: "Сообщество",
+                    cover: "🎵",
+                    year: 2024,
+                    tracks: updatedTracks,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isMigrated: true
+                });
+                
+                console.log(`Добавлено ${newTracks.length} треков в альбом "Разные треки"`);
+                
+                // 5. Обновляем оценки, чтобы они ссылались на правильный альбом
+                let updatedCount = 0;
+                for (const rating of oldRatings) {
+                    // Проверяем, есть ли уже такая оценка в новой структуре
+                    const existingRating = await db.collection('ratings')
+                        .where('trackId', '==', rating.trackId)
+                        .where('userId', '==', rating.userId)
+                        .get();
+                    
+                    if (existingRating.empty) {
+                        // Сохраняем оценку с обновленными данными
+                        await db.collection('ratings').add({
+                            trackId: rating.trackId,
+                            trackTitle: rating.trackTitle,
+                            trackArtist: rating.trackArtist,
+                            userId: rating.userId,
+                            scores: rating.scores,
+                            totalScore: rating.totalScore,
+                            timestamp: rating.timestamp || firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        updatedCount++;
+                    }
+                }
+                
+                console.log(`Обновлено ${updatedCount} оценок`);
+                alert(`✅ Миграция завершена!\n\nДобавлено ${newTracks.length} треков\nОбновлено ${updatedCount} оценок\n\nТеперь ваши старые треки в альбоме "Разные треки"`);
+                
+                // Обновляем отображение
+                displayTopTracks();
+                displayChart('all');
+                loadMyRatings();
+                loadAlbums().then(albums => {
+                    displayAlbums(albums.slice(0, 3), 'latest-albums');
+                    displayAlbums(albums, 'all-albums');
+                });
+                
+            } catch (error) {
+                console.error("Ошибка миграции:", error);
+                alert("Ошибка при восстановлении данных: " + error.message);
             }
         }
         
-        // Загрузка всех треков и их оценок
+        // Загрузка всех треков с оценками
         async function getAllTracksWithRatings() {
             const albumsSnapshot = await db.collection('albums').get();
             const allTracks = [];
@@ -580,7 +615,6 @@
                 const album = albumDoc.data();
                 if (album.tracks) {
                     for (const track of album.tracks) {
-                        // Получаем оценки для трека
                         const ratingsSnapshot = await db.collection('ratings')
                             .where('trackId', '==', track.id)
                             .get();
@@ -609,20 +643,17 @@
             return allTracks;
         }
         
-        // Отображение чарта
+        // Остальные функции (displayChart, loadAlbums, displayAlbums, displayTopTracks, showAlbum, showTrack, submitRating, loadMyRatings, togglePlay, showPage, goBack)
+        // ... (сохраняем все функции из предыдущей версии)
+        
         async function displayChart(filter = 'all') {
             const allTracks = await getAllTracksWithRatings();
-            
-            // Фильтрация
             let filteredTracks = [...allTracks];
             if (filter === 'week') {
-                // Для демо - показываем треки с более чем 2 оценками
                 filteredTracks = filteredTracks.filter(t => t.ratingsCount >= 1);
             } else if (filter === 'month') {
                 filteredTracks = filteredTracks.filter(t => t.ratingsCount >= 2);
             }
-            
-            // Сортировка по рейтингу
             filteredTracks.sort((a, b) => b.avgScore - a.avgScore);
             
             const chartList = document.getElementById('chart-list');
@@ -650,15 +681,13 @@
             });
         }
         
-        // Загрузка альбомов
         async function loadAlbums() {
-            const albumsSnapshot = await db.collection('albums').orderBy('year', 'desc').get();
+            const albumsSnapshot = await db.collection('albums').orderBy('createdAt', 'desc').get();
             const albums = [];
             albumsSnapshot.forEach(doc => albums.push({ id: doc.id, ...doc.data() }));
             return albums;
         }
         
-        // Отображение альбомов
         function displayAlbums(albums, containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -680,11 +709,9 @@
             });
         }
         
-        // Отображение топ-5 треков на главной
         async function displayTopTracks() {
             const allTracks = await getAllTracksWithRatings();
             const topTracks = allTracks.sort((a, b) => b.avgScore - a.avgScore).slice(0, 5);
-            
             const container = document.getElementById('top-week');
             container.innerHTML = '';
             
@@ -709,16 +736,12 @@
             });
         }
         
-        // Показать альбом
         async function showAlbum(albumId) {
             const albumDoc = await db.collection('albums').doc(albumId).get();
             const album = { id: albumDoc.id, ...albumDoc.data() };
-            
             previousPage = document.querySelector('.nav-link.active').dataset.page;
             
-            const trackPage = document.getElementById('track-page');
             const trackContent = document.getElementById('track-content');
-            
             trackContent.innerHTML = `
                 <button class="back-button" onclick="goBack()">← Назад</button>
                 <div class="track-header">
@@ -744,33 +767,22 @@
                     `).join('')}
                 </div>
             `;
-            
             showPage('track');
         }
         
-        // Показать трек
         async function showTrack(trackId, trackTitle, trackArtist) {
             currentTrack = { id: trackId, title: trackTitle, artist: trackArtist };
-            
-            // Загрузка оценок
-            const ratingsSnapshot = await db.collection('ratings')
-                .where('trackId', '==', trackId)
-                .get();
+            const ratingsSnapshot = await db.collection('ratings').where('trackId', '==', trackId).get();
             
             const ratings = [];
             let userRating = null;
-            
             ratingsSnapshot.forEach(doc => {
                 const rating = doc.data();
                 ratings.push(rating);
-                if (rating.userId === currentUser?.uid) {
-                    userRating = rating;
-                }
+                if (rating.userId === currentUser?.uid) userRating = rating;
             });
             
-            const avgScore = ratings.length > 0 
-                ? (ratings.reduce((sum, r) => sum + r.totalScore, 0) / ratings.length).toFixed(1)
-                : 0;
+            const avgScore = ratings.length > 0 ? (ratings.reduce((sum, r) => sum + r.totalScore, 0) / ratings.length).toFixed(1) : 0;
             
             const trackContent = document.getElementById('track-content');
             trackContent.innerHTML = `
@@ -789,7 +801,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="audio-player">
                     <h3>🎧 Аудиоплеер</h3>
                     <div class="player-controls">
@@ -797,39 +808,16 @@
                         <div class="time-info" id="time-info">00:00 / 00:00</div>
                     </div>
                     <audio id="audio-player" style="display: none;"></audio>
-                    <p style="margin-top: 15px; color: #666; font-size: 14px;">🎵 Аудиофайлы можно добавить в Firebase Storage</p>
                 </div>
-                
                 <div class="rating-form">
                     <h3>Оценить трек</h3>
-                    <div class="slider-container">
-                        <label>Рифмы/образы (0-10):</label>
-                        <input type="range" id="melody" min="0" max="10" value="${userRating?.scores?.melody || 5}">
-                        <span id="melody-value">${userRating?.scores?.melody || 5}</span>
-                    </div>
-                    <div class="slider-container">
-                        <label>Структура/ритмика (0-10):</label>
-                        <input type="range" id="rhythm" min="0" max="10" value="${userRating?.scores?.rhythm || 5}">
-                        <span id="rhythm-value">${userRating?.scores?.rhythm || 5}</span>
-                    </div>
-                    <div class="slider-container">
-                        <label>Реализация стиля (0-10):</label>
-                        <input type="range" id="lyrics" min="0" max="10" value="${userRating?.scores?.lyrics || 5}">
-                        <span id="lyrics-value">${userRating?.scores?.lyrics || 5}</span>
-                    </div>
-                    <div class="slider-container">
-                        <label>Индивидуальность (0-10):</label>
-                        <input type="range" id="originality" min="0" max="10" value="${userRating?.scores?.originality || 5}">
-                        <span id="originality-value">${userRating?.scores?.originality || 5}</span>
-                    </div>
-                    <div class="slider-container">
-                        <label>Атмосфера (множитель ×1-2):</label>
-                        <input type="range" id="emotion" min="1" max="2" step="0.1" value="${userRating?.scores?.emotionMultiplier || 1}">
-                        <span id="emotion-value">${userRating?.scores?.emotionMultiplier || 1}</span>
-                    </div>
+                    <div class="slider-container"><label>Рифмы/образы (0-10):</label><input type="range" id="melody" min="0" max="10" value="${userRating?.scores?.melody || 5}"><span id="melody-value">${userRating?.scores?.melody || 5}</span></div>
+                    <div class="slider-container"><label>Структура/ритмика (0-10):</label><input type="range" id="rhythm" min="0" max="10" value="${userRating?.scores?.rhythm || 5}"><span id="rhythm-value">${userRating?.scores?.rhythm || 5}</span></div>
+                    <div class="slider-container"><label>Реализация стиля (0-10):</label><input type="range" id="lyrics" min="0" max="10" value="${userRating?.scores?.lyrics || 5}"><span id="lyrics-value">${userRating?.scores?.lyrics || 5}</span></div>
+                    <div class="slider-container"><label>Индивидуальность (0-10):</label><input type="range" id="originality" min="0" max="10" value="${userRating?.scores?.originality || 5}"><span id="originality-value">${userRating?.scores?.originality || 5}</span></div>
+                    <div class="slider-container"><label>Атмосфера (множитель ×1-2):</label><input type="range" id="emotion" min="1" max="2" step="0.1" value="${userRating?.scores?.emotionMultiplier || 1}"><span id="emotion-value">${userRating?.scores?.emotionMultiplier || 1}</span></div>
                     <button class="submit-rating-btn" onclick="submitRating()">${userRating ? 'Обновить оценку' : 'Опубликовать оценку'}</button>
                 </div>
-                
                 <div class="ratings-section">
                     <h3>Отзывы сообщества</h3>
                     ${ratings.map(rating => `
@@ -839,163 +827,92 @@
                                 Рифмы: ${rating.scores.melody} | Ритм: ${rating.scores.rhythm} | 
                                 Стиль: ${rating.scores.lyrics} | Харизма: ${rating.scores.originality}
                             </div>
-                            <small style="color: #999;">${rating.timestamp?.toDate ? new Date(rating.timestamp.toDate()).toLocaleDateString() : 'недавно'}</small>
+                            <small>${rating.timestamp?.toDate ? new Date(rating.timestamp.toDate()).toLocaleDateString() : 'недавно'}</small>
                         </div>
                     `).join('')}
                     ${ratings.length === 0 ? '<p style="padding: 20px; text-align: center;">Пока нет оценок. Будьте первым!</p>' : ''}
                 </div>
             `;
             
-            // Обновление значений ползунков
             document.querySelectorAll('#track-content input[type="range"]').forEach(slider => {
                 const valueSpan = document.getElementById(`${slider.id}-value`);
-                if (valueSpan) {
-                    slider.addEventListener('input', () => {
-                        if (slider.id === 'emotion') {
-                            valueSpan.textContent = `×${parseFloat(slider.value).toFixed(1)}`;
-                        } else {
-                            valueSpan.textContent = slider.value;
-                        }
-                    });
-                }
+                if (valueSpan) slider.addEventListener('input', () => valueSpan.textContent = slider.id === 'emotion' ? `×${parseFloat(slider.value).toFixed(1)}` : slider.value);
             });
-            
             showPage('track');
         }
         
-        // Отправка оценки
         async function submitRating() {
-            if (!currentUser) {
-                alert('Подождите, идет авторизация...');
-                return;
-            }
-            
+            if (!currentUser) { alert('Подождите, идет авторизация...'); return; }
             const melody = parseInt(document.getElementById('melody').value);
             const rhythm = parseInt(document.getElementById('rhythm').value);
             const lyrics = parseInt(document.getElementById('lyrics').value);
             const originality = parseInt(document.getElementById('originality').value);
             const emotionMultiplier = parseFloat(document.getElementById('emotion').value);
-            
             const sum = melody + rhythm + lyrics + originality;
             const totalScore = Math.min(Math.round(sum * emotionMultiplier * 2.25), 90);
             
             try {
-                const existingSnapshot = await db.collection('ratings')
-                    .where('trackId', '==', currentTrack.id)
-                    .where('userId', '==', currentUser.uid)
-                    .get();
-                
+                const existingSnapshot = await db.collection('ratings').where('trackId', '==', currentTrack.id).where('userId', '==', currentUser.uid).get();
                 if (!existingSnapshot.empty) {
-                    existingSnapshot.forEach(doc => {
-                        db.collection('ratings').doc(doc.id).update({
-                            scores: { melody, rhythm, lyrics, originality, emotionMultiplier },
-                            totalScore: totalScore,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    });
+                    existingSnapshot.forEach(doc => db.collection('ratings').doc(doc.id).update({
+                        scores: { melody, rhythm, lyrics, originality, emotionMultiplier }, totalScore, timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    }));
                 } else {
                     await db.collection('ratings').add({
-                        trackId: currentTrack.id,
-                        trackTitle: currentTrack.title,
-                        trackArtist: currentTrack.artist,
-                        userId: currentUser.uid,
-                        scores: { melody, rhythm, lyrics, originality, emotionMultiplier },
-                        totalScore: totalScore,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        trackId: currentTrack.id, trackTitle: currentTrack.title, trackArtist: currentTrack.artist,
+                        userId: currentUser.uid, scores: { melody, rhythm, lyrics, originality, emotionMultiplier },
+                        totalScore: totalScore, timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
-                
                 alert('Оценка сохранена!');
                 showTrack(currentTrack.id, currentTrack.title, currentTrack.artist);
                 displayTopTracks();
                 displayChart(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
                 loadMyRatings();
-                
-            } catch (error) {
-                console.error("Ошибка:", error);
-                alert('Ошибка при сохранении оценки');
-            }
+            } catch (error) { console.error("Ошибка:", error); alert('Ошибка при сохранении оценки'); }
         }
         
-        // Загрузка моих оценок
         async function loadMyRatings() {
             if (!currentUser) return;
-            
-            const ratingsSnapshot = await db.collection('ratings')
-                .where('userId', '==', currentUser.uid)
-                .orderBy('timestamp', 'desc')
-                .get();
-            
+            const ratingsSnapshot = await db.collection('ratings').where('userId', '==', currentUser.uid).orderBy('timestamp', 'desc').get();
             const container = document.getElementById('my-ratings-list');
             container.innerHTML = '';
-            
-            if (ratingsSnapshot.empty) {
-                container.innerHTML = '<p style="color: white; text-align: center;">Вы еще не оценили ни одного трека</p>';
-                return;
-            }
-            
+            if (ratingsSnapshot.empty) { container.innerHTML = '<p style="color: white; text-align: center;">Вы еще не оценили ни одного трека</p>'; return; }
             ratingsSnapshot.forEach(doc => {
                 const rating = doc.data();
                 const ratingCard = document.createElement('div');
                 ratingCard.className = 'track-card';
                 ratingCard.onclick = () => showTrack(rating.trackId, rating.trackTitle, rating.trackArtist);
-                ratingCard.innerHTML = `
-                    <div class="track-cover">⭐</div>
-                    <div class="track-info">
-                        <div class="track-title">${rating.trackTitle}</div>
-                        <div class="track-artist">${rating.trackArtist}</div>
-                        <div class="track-stats">Ваша оценка: ${rating.totalScore}/90</div>
-                    </div>
-                `;
+                ratingCard.innerHTML = `<div class="track-cover">⭐</div><div class="track-info"><div class="track-title">${rating.trackTitle}</div><div class="track-artist">${rating.trackArtist}</div><div class="track-stats">Ваша оценка: ${rating.totalScore}/90</div></div>`;
                 container.appendChild(ratingCard);
             });
         }
         
-        // Аудиоплеер
         function togglePlay(btn) {
             const audio = document.getElementById('audio-player');
-            if (audio.paused) {
-                audio.play();
-                btn.textContent = '⏸';
-            } else {
-                audio.pause();
-                btn.textContent = '▶';
-            }
+            if (audio.paused) { audio.play(); btn.textContent = '⏸'; } 
+            else { audio.pause(); btn.textContent = '▶'; }
         }
         
-        // Навигация
         function showPage(page) {
             previousPage = document.querySelector('.nav-link.active')?.dataset.page || 'home';
-            
             document.getElementById('home-page').classList.add('hidden');
             document.getElementById('chart-page').classList.add('hidden');
             document.getElementById('albums-page').classList.add('hidden');
             document.getElementById('track-page').classList.add('hidden');
             document.getElementById('my-ratings-page').classList.add('hidden');
-            
             document.getElementById(`${page}-page`).classList.remove('hidden');
-            
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             document.querySelector(`[data-page="${page}"]`).classList.add('active');
             
-            if (page === 'home') {
-                displayTopTracks();
-                loadAlbums().then(albums => displayAlbums(albums.slice(0, 3), 'latest-albums'));
-            } else if (page === 'chart') {
-                const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
-                displayChart(activeFilter);
-            } else if (page === 'albums') {
-                loadAlbums().then(albums => displayAlbums(albums, 'all-albums'));
-            } else if (page === 'my-ratings') {
-                loadMyRatings();
-            }
+            if (page === 'home') { displayTopTracks(); loadAlbums().then(albums => displayAlbums(albums.slice(0, 3), 'latest-albums')); }
+            else if (page === 'chart') { displayChart(document.querySelector('.filter-btn.active')?.dataset.filter || 'all'); }
+            else if (page === 'albums') { loadAlbums().then(albums => displayAlbums(albums, 'all-albums')); }
+            else if (page === 'my-ratings') { loadMyRatings(); }
         }
         
-        function goBack() {
-            showPage(previousPage);
-        }
+        function goBack() { showPage(previousPage); }
         
-        // Фильтры чарта
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('filter-btn')) {
                 document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -1004,18 +921,15 @@
             }
         });
         
-        // Инициализация
-        auth.signInAnonymously()
-            .then((userCredential) => {
-                currentUser = userCredential.user;
-                initSampleData();
-                displayTopTracks();
-                loadAlbums().then(albums => displayAlbums(albums.slice(0, 3), 'latest-albums'));
-                displayChart('all');
-            })
-            .catch((error) => console.error("Ошибка:", error));
+        document.getElementById('migrate-btn')?.addEventListener('click', migrateOldData);
         
-        // Делаем функции глобальными
+        auth.signInAnonymously().then((userCredential) => {
+            currentUser = userCredential.user;
+            displayTopTracks();
+            loadAlbums().then(albums => displayAlbums(albums.slice(0, 3), 'latest-albums'));
+            displayChart('all');
+        }).catch((error) => console.error("Ошибка:", error));
+        
         window.showPage = showPage;
         window.showAlbum = showAlbum;
         window.showTrack = showTrack;
