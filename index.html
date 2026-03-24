@@ -3,314 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дуля за творчество</title>
+    <title>Дуля за творчество - Музыкальное сообщество</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .track-card, .results, .community, .user-tracks {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .community, .user-tracks {
-            grid-column: 1 / -1;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
-        .slider-container {
-            margin-bottom: 20px;
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
-        .slider-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
+        
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        input[type="range"] {
-            width: 100%;
-            height: 10px;
-            background: #ddd;
-            border-radius: 5px;
-            -webkit-appearance: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #4CAF50;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        .submit-btn, .add-track-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-            width: 100%;
-        }
-        .add-track-btn {
-            background-color: #2196F3;
-        }
-        .change-track-btn {
-            background-color: #ff9800;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-        .refresh-btn {
-            background-color: #2196F3;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-        .score-display {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
-            color: #4CAF50;
-        }
-        .hidden {
-            display: none;
-        }
-        .track-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #fafafa;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .track-item:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
-        }
-        .track-item.rated {
-            border-left: 4px solid #4CAF50;
-        }
-        .track-header {
+        
+        /* Навигация */
+        .nav-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-        .track-title {
-            font-size: 18px;
+        
+        .logo {
+            font-size: 24px;
             font-weight: bold;
-            flex-grow: 1;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .community-score {
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        /* Главная страница */
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .hero p {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        /* Альбомы */
+        .albums-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .album-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .album-cover {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+        
+        .album-info {
+            padding: 20px;
+        }
+        
+        .album-title {
             font-size: 20px;
             font-weight: bold;
-            color: #2196F3;
+            margin-bottom: 8px;
         }
-        .rating-count {
+        
+        .album-artist {
             color: #666;
-            font-size: 14px;
+            margin-bottom: 10px;
         }
-        .user-rating {
-            background: #e3f2fd;
-            padding: 10px;
-            border-radius: 5px;
+        
+        .album-stats {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* Страница трека */
+        .track-page {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+        
+        .back-button:hover {
+            background: #e0e0e0;
+        }
+        
+        .track-header {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .track-cover-large {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+        
+        .track-info-large {
+            flex: 1;
+        }
+        
+        .track-title-large {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .track-artist-large {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        /* Аудиоплеер */
+        .audio-player {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        audio {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
             margin-top: 10px;
         }
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ddd;
-        }
-        .tab {
-            padding: 10px 20px;
+        
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            font-size: 20px;
             cursor: pointer;
-            border-bottom: 3px solid transparent;
+            transition: transform 0.3s;
         }
-        .tab.active {
-            border-bottom-color: #4CAF50;
+        
+        .play-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .time-info {
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        /* Оценки */
+        .ratings-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .rating-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .avg-score {
+            text-align: center;
+        }
+        
+        .avg-score-number {
+            font-size: 48px;
             font-weight: bold;
+            color: #667eea;
         }
-        .tab-content {
+        
+        .rating-bars {
+            flex: 1;
+        }
+        
+        .rating-bar-item {
+            margin-bottom: 10px;
+        }
+        
+        .rating-bar-label {
+            display: inline-block;
+            width: 120px;
+        }
+        
+        .rating-bar-bg {
+            display: inline-block;
+            width: 200px;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            vertical-align: middle;
+        }
+        
+        .rating-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+        
+        /* Форма оценки */
+        .rating-form {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .slider-container {
+            margin-bottom: 20px;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+        }
+        
+        .submit-rating-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        /* Скрытые элементы */
+        .hidden {
             display: none;
         }
-        .tab-content.active {
-            display: block;
-        }
-        .selected-track {
-            background: #e8f5e8;
-            border: 2px solid #4CAF50;
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .track-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .rating-stats {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>🎵 Дуля за творчество</h1>
-    <p style="text-align: center; color: #666;">Оценивайте треки и смотрите оценки других пользователей</p>
-
-    <div class="tabs">
-        <div class="tab active" data-tab="browse">Обзор треков</div>
-        <div class="tab" data-tab="rate">Оценить трек</div>
-        <div class="tab" data-tab="community">Рейтинги</div>
-        <div class="tab" data-tab="my-tracks">Мои оценки</div>
-    </div>
-
-    <!-- Вкладка обзора треков -->
-    <div class="tab-content active" id="browse-tab">
-        <div class="community">
-            <h2>🎵 Все треки для оценки</h2>
-            <p>Нажмите на трек, чтобы оценить его</p>
-            <div id="all-tracks-list"></div>
-        </div>
-    </div>
-
-    <!-- Вкладка оценки -->
-    <div class="tab-content" id="rate-tab">
-        <div class="container">
-            <div class="track-card">
-                <h2>📝 Оценить трек</h2>
-                
-                <!-- Выбранный трек -->
-                <div id="selected-track-info" class="input-group" style="display: none;">
-                    <label>Выбранный трек:</label>
-                    <div id="current-track-display" class="track-item selected-track"></div>
-                </div>
-
-                <!-- Форма добавления нового трека -->
-                <div id="add-track-form">
-                    <div class="input-group">
-                        <label for="track-title">Название трека:</label>
-                        <input type="text" id="track-title" placeholder="Bohemian Rhapsody">
-                    </div>
-                    <div class="input-group">
-                        <label for="track-artist">Исполнитель:</label>
-                        <input type="text" id="track-artist" placeholder="Queen">
-                    </div>
-                    <button class="add-track-btn" id="add-track">+ Добавить новый трек</button>
-                </div>
-
-                <!-- Форма оценки -->
-                <div id="rating-form" style="display: none;">
-                    <h3>Критерии оценки:</h3>
-                    
-                    <!-- Кнопка сброса выбранного трека -->
-                    <button type="button" class="change-track-btn" id="change-track">
-                        🔄 Выбрать другой трек
-                    </button>
-
-                    <div class="slider-container">
-                        <label for="melody">Рифмы/образы (0-10):</label>
-                        <input type="range" id="melody" min="0" max="10" value="5">
-                        <div class="slider-info">
-                            <span>0</span>
-                            <span id="melody-value">5</span>
-                            <span>10</span>
-                        </div>
-                    </div>
-
-                    <div class="slider-container">
-                        <label for="rhythm">Структура/ритмика (0-10):</label>
-                        <input type="range" id="rhythm" min="0" max="10" value="5">
-                        <div class="slider-info">
-                            <span>0</span>
-                            <span id="rhythm-value">5</span>
-                            <span>10</span>
-                        </div>
-                    </div>
-
-                    <div class="slider-container">
-                        <label for="lyrics">Реализация стиля (0-10):</label>
-                        <input type="range" id="lyrics" min="0" max="10" value="5">
-                        <div class="slider-info">
-                            <span>0</span>
-                            <span id="lyrics-value">5</span>
-                            <span>10</span>
-                        </div>
-                    </div>
-
-                    <div class="slider-container">
-                        <label for="originality">Индивидуальность/харизма (0-10):</label>
-                        <input type="range" id="originality" min="0" max="10" value="5">
-                        <div class="slider-info">
-                            <span>0</span>
-                            <span id="originality-value">5</span>
-                            <span>10</span>
-                        </div>
-                    </div>
-
-                    <div class="slider-container">
-                        <label for="emotion">Атмосфера/вайб (множитель ×1-2):</label>
-                        <input type="range" id="emotion" min="1" max="2" step="0.1" value="1">
-                        <div class="slider-info">
-                            <span>×1</span>
-                            <span id="emotion-value">×1.0</span>
-                            <span>×2</span>
-                        </div>
-                    </div>
-
-                    <button class="submit-btn" id="submit-rating">Опубликовать оценку</button>
-                </div>
-            </div>
-
-            <div class="results hidden" id="results">
-                <h2>✅ Оценка опубликована!</h2>
-                <div id="track-info-result"></div>
-                <div class="score-display" id="total-score">0</div>
-                <div id="criteria-scores"></div>
-                <button class="submit-btn" id="rate-another">🎵 Оценить другой трек</button>
+    <div class="app-container">
+        <!-- Навигация -->
+        <div class="nav-bar">
+            <div class="logo">🎵 Дуля за творчество</div>
+            <div class="nav-links">
+                <a class="nav-link active" data-page="home">Главная</a>
+                <a class="nav-link" data-page="albums">Альбомы</a>
+                <a class="nav-link" data-page="my-ratings">Мои оценки</a>
             </div>
         </div>
-    </div>
-
-    <!-- Вкладка рейтингов -->
-    <div class="tab-content" id="community-tab">
-        <div class="community">
-            <h2>🔥 Популярные треки сообщества</h2>
-            <button class="refresh-btn" id="refresh-ratings">🔄 Обновить рейтинги</button>
-            <div id="community-tracks"></div>
+        
+        <!-- Главная страница -->
+        <div id="home-page">
+            <div class="hero">
+                <h1>🎵 Музыкальное сообщество</h1>
+                <p>Оценивайте треки, создавайте альбомы и делитесь впечатлениями</p>
+            </div>
+            
+            <h2 style="color: white; margin-bottom: 20px;">🎸 Популярные треки</h2>
+            <div id="popular-tracks" class="albums-grid"></div>
+            
+            <h2 style="color: white; margin: 40px 0 20px;">💿 Новые альбомы</h2>
+            <div id="latest-albums" class="albums-grid"></div>
         </div>
-    </div>
-
-    <!-- Вкладка моих оценок -->
-    <div class="tab-content" id="my-tracks-tab">
-        <div class="user-tracks">
-            <h2>📝 Мои оценки</h2>
-            <div id="user-tracks-list"></div>
+        
+        <!-- Страница альбомов -->
+        <div id="albums-page" class="hidden">
+            <div class="track-page">
+                <button class="back-button" onclick="showPage('home')">← На главную</button>
+                <h2>Все альбомы</h2>
+                <div id="all-albums" class="albums-grid" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+        
+        <!-- Страница трека -->
+        <div id="track-page" class="hidden">
+            <div class="track-page" id="track-content"></div>
+        </div>
+        
+        <!-- Страница моих оценок -->
+        <div id="my-ratings-page" class="hidden">
+            <div class="track-page">
+                <button class="back-button" onclick="showPage('home')">← На главную</button>
+                <h2>Мои оценки</h2>
+                <div id="my-ratings-list" class="albums-grid" style="margin-top: 20px;"></div>
+            </div>
         </div>
     </div>
 
@@ -318,8 +404,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
 
     <script>
+        // Firebase конфигурация
         const firebaseConfig = {
             apiKey: "AIzaSyCfMUhNeaty-xjfXq8NlmnEcozI0eoI19c",
             authDomain: "dulyazatvorchestvo.firebaseapp.com",
@@ -329,51 +417,270 @@
             appId: "1:711700746757:web:9e2c55939ef87b5a49026c",
             measurementId: "G-9BMQELN0VY"
         };
-
-        // Инициализация Firebase
+        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-
-        document.addEventListener('DOMContentLoaded', function() {
-            let currentUser = null;
-            let selectedTrack = null;
-            let allTracks = [];
-
-            // Аутентификация пользователя
-            auth.signInAnonymously()
-                .then((userCredential) => {
-                    currentUser = userCredential.user;
-                    loadAllTracks();
-                    loadCommunityTracks();
-                    loadUserTracks();
-                })
-                .catch((error) => {
-                    console.error("Ошибка аутентификации:", error);
-                });
-
-            // Управление табами
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    tab.classList.add('active');
-                    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
-                    
-                    if (tab.dataset.tab === 'browse') {
-                        loadAllTracks();
-                    } else if (tab.dataset.tab === 'community') {
-                        loadCommunityTracks();
-                    } else if (tab.dataset.tab === 'my-tracks') {
-                        loadUserTracks();
-                    }
-                });
+        const storage = firebase.storage();
+        
+        let currentUser = null;
+        let currentTrack = null;
+        
+        // Пример данных для демонстрации
+        const sampleAlbums = [
+            {
+                id: "album1",
+                title: "Ночной дозор",
+                artist: "Макс Корж",
+                cover: "🌙",
+                year: 2024,
+                tracks: [
+                    { id: "track1", title: "Малиновый закат", duration: "3:45", audioUrl: "" },
+                    { id: "track2", title: "Танцы на крыше", duration: "4:12", audioUrl: "" },
+                    { id: "track3", title: "Город спит", duration: "3:58", audioUrl: "" }
+                ]
+            },
+            {
+                id: "album2",
+                title: "Цветы",
+                artist: "Miyagi & Эндшпиль",
+                cover: "🌸",
+                year: 2024,
+                tracks: [
+                    { id: "track4", title: "I Got Love", duration: "4:20", audioUrl: "" },
+                    { id: "track5", title: "Minor", duration: "3:55", audioUrl: "" }
+                ]
+            },
+            {
+                id: "album3",
+                title: "По волнам",
+                artist: "Баста",
+                cover: "🌊",
+                year: 2023,
+                tracks: [
+                    { id: "track6", title: "Сансара", duration: "5:30", audioUrl: "" },
+                    { id: "track7", title: "Выпускной", duration: "4:15", audioUrl: "" }
+                ]
+            }
+        ];
+        
+        // Сохранение альбомов в Firebase при первом запуске
+        async function initSampleData() {
+            const albumsRef = await db.collection('albums').get();
+            if (albumsRef.empty) {
+                for (const album of sampleAlbums) {
+                    await db.collection('albums').doc(album.id).set(album);
+                }
+            }
+        }
+        
+        // Загрузка всех альбомов
+        async function loadAlbums() {
+            const albumsSnapshot = await db.collection('albums').orderBy('year', 'desc').get();
+            const albums = [];
+            albumsSnapshot.forEach(doc => albums.push({ id: doc.id, ...doc.data() }));
+            return albums;
+        }
+        
+        // Отображение альбомов
+        function displayAlbums(albums, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            albums.forEach(album => {
+                const albumCard = document.createElement('div');
+                albumCard.className = 'album-card';
+                albumCard.onclick = () => showAlbum(album.id);
+                albumCard.innerHTML = `
+                    <div class="album-cover">${album.cover || '🎵'}</div>
+                    <div class="album-info">
+                        <div class="album-title">${album.title}</div>
+                        <div class="album-artist">${album.artist}</div>
+                        <div class="album-stats">${album.tracks?.length || 0} треков • ${album.year}</div>
+                    </div>
+                `;
+                container.appendChild(albumCard);
             });
-
+        }
+        
+        // Отображение популярных треков
+        async function loadPopularTracks() {
+            const ratingsSnapshot = await db.collection('ratings').get();
+            const tracks = {};
+            
+            ratingsSnapshot.forEach(doc => {
+                const rating = doc.data();
+                if (!tracks[rating.trackId]) {
+                    tracks[rating.trackId] = {
+                        id: rating.trackId,
+                        title: rating.trackTitle,
+                        artist: rating.trackArtist,
+                        scores: [],
+                        totalScore: 0
+                    };
+                }
+                tracks[rating.trackId].scores.push(rating.totalScore);
+                tracks[rating.trackId].totalScore += rating.totalScore;
+            });
+            
+            const popularTracks = Object.values(tracks)
+                .sort((a, b) => (b.totalScore / b.scores.length) - (a.totalScore / a.scores.length))
+                .slice(0, 6);
+            
+            const container = document.getElementById('popular-tracks');
+            container.innerHTML = '';
+            
+            popularTracks.forEach(track => {
+                const avgScore = (track.totalScore / track.scores.length).toFixed(1);
+                const trackCard = document.createElement('div');
+                trackCard.className = 'album-card';
+                trackCard.onclick = () => showTrack(track.id, track.title, track.artist);
+                trackCard.innerHTML = `
+                    <div class="album-cover">🎵</div>
+                    <div class="album-info">
+                        <div class="album-title">${track.title}</div>
+                        <div class="album-artist">${track.artist}</div>
+                        <div class="album-stats">⭐ ${avgScore}/90 • ${track.scores.length} оценок</div>
+                    </div>
+                `;
+                container.appendChild(trackCard);
+            });
+        }
+        
+        // Показать альбом
+        async function showAlbum(albumId) {
+            const albumDoc = await db.collection('albums').doc(albumId).get();
+            const album = { id: albumDoc.id, ...albumDoc.data() };
+            
+            const trackPage = document.getElementById('track-page');
+            const trackContent = document.getElementById('track-content');
+            
+            trackContent.innerHTML = `
+                <button class="back-button" onclick="showPage('albums')">← Назад к альбомам</button>
+                <div class="track-header">
+                    <div class="track-cover-large">${album.cover || '💿'}</div>
+                    <div class="track-info-large">
+                        <div class="track-title-large">${album.title}</div>
+                        <div class="track-artist-large">${album.artist}</div>
+                        <div>${album.year} • ${album.tracks?.length || 0} треков</div>
+                    </div>
+                </div>
+                <div class="ratings-section">
+                    <h3>Треки альбома</h3>
+                    ${album.tracks?.map(track => `
+                        <div class="track-item" style="padding: 15px; border-bottom: 1px solid #e0e0e0; cursor: pointer;" onclick="showTrack('${track.id}', '${track.title}', '${album.artist}')">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${track.title}</strong><br>
+                                    <small>${track.duration}</small>
+                                </div>
+                                <div>▶</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            showPage('track');
+        }
+        
+        // Показать трек
+        async function showTrack(trackId, trackTitle, trackArtist) {
+            currentTrack = { id: trackId, title: trackTitle, artist: trackArtist };
+            
+            // Загрузка оценок
+            const ratingsSnapshot = await db.collection('ratings')
+                .where('trackId', '==', trackId)
+                .get();
+            
+            const ratings = [];
+            let userRating = null;
+            
+            ratingsSnapshot.forEach(doc => {
+                const rating = doc.data();
+                ratings.push(rating);
+                if (rating.userId === currentUser?.uid) {
+                    userRating = rating;
+                }
+            });
+            
+            const avgScore = ratings.length > 0 
+                ? (ratings.reduce((sum, r) => sum + r.totalScore, 0) / ratings.length).toFixed(1)
+                : 0;
+            
+            const trackContent = document.getElementById('track-content');
+            trackContent.innerHTML = `
+                <button class="back-button" onclick="goBack()">← Назад</button>
+                <div class="track-header">
+                    <div class="track-cover-large">🎵</div>
+                    <div class="track-info-large">
+                        <div class="track-title-large">${trackTitle}</div>
+                        <div class="track-artist-large">${trackArtist}</div>
+                        <div class="rating-stats">
+                            <div class="avg-score">
+                                <div class="avg-score-number">${avgScore}</div>
+                                <div>средняя оценка</div>
+                                <small>${ratings.length} оценок</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="audio-player">
+                    <h3>🎧 Аудиоплеер</h3>
+                    <div class="player-controls">
+                        <button class="play-btn" onclick="togglePlay(this)">▶</button>
+                        <div class="time-info" id="time-info">00:00 / 00:00</div>
+                    </div>
+                    <audio id="audio-player" style="display: none;"></audio>
+                    <p style="margin-top: 15px; color: #666;">Добавьте аудиофайлы в Firebase Storage для воспроизведения</p>
+                </div>
+                
+                <div class="rating-form">
+                    <h3>Оценить трек</h3>
+                    <div class="slider-container">
+                        <label>Рифмы/образы (0-10):</label>
+                        <input type="range" id="melody" min="0" max="10" value="${userRating?.scores?.melody || 5}">
+                        <span id="melody-value">${userRating?.scores?.melody || 5}</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Структура/ритмика (0-10):</label>
+                        <input type="range" id="rhythm" min="0" max="10" value="${userRating?.scores?.rhythm || 5}">
+                        <span id="rhythm-value">${userRating?.scores?.rhythm || 5}</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Реализация стиля (0-10):</label>
+                        <input type="range" id="lyrics" min="0" max="10" value="${userRating?.scores?.lyrics || 5}">
+                        <span id="lyrics-value">${userRating?.scores?.lyrics || 5}</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Индивидуальность (0-10):</label>
+                        <input type="range" id="originality" min="0" max="10" value="${userRating?.scores?.originality || 5}">
+                        <span id="originality-value">${userRating?.scores?.originality || 5}</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Атмосфера (множитель ×1-2):</label>
+                        <input type="range" id="emotion" min="1" max="2" step="0.1" value="${userRating?.scores?.emotionMultiplier || 1}">
+                        <span id="emotion-value">${userRating?.scores?.emotionMultiplier || 1}</span>
+                    </div>
+                    <button class="submit-rating-btn" onclick="submitRating()">${userRating ? 'Обновить оценку' : 'Опубликовать оценку'}</button>
+                </div>
+                
+                <div class="ratings-section">
+                    <h3>Отзывы сообщества</h3>
+                    ${ratings.map(rating => `
+                        <div style="padding: 15px; border-bottom: 1px solid #e0e0e0;">
+                            <strong>⭐ ${rating.totalScore}/90</strong>
+                            <div style="font-size: 14px; color: #666;">Мелодия: ${rating.scores.melody} | Ритм: ${rating.scores.rhythm} | Текст: ${rating.scores.lyrics} | Оригинальность: ${rating.scores.originality}</div>
+                            <small>${new Date(rating.timestamp?.toDate()).toLocaleDateString() || 'недавно'}</small>
+                        </div>
+                    `).join('')}
+                    ${ratings.length === 0 ? '<p>Пока нет оценок. Будьте первым!</p>' : ''}
+                </div>
+            `;
+            
             // Обновление значений ползунков
-            const sliders = document.querySelectorAll('input[type="range"]');
-            sliders.forEach(slider => {
+            document.querySelectorAll('#track-content input[type="range"]').forEach(slider => {
                 const valueSpan = document.getElementById(`${slider.id}-value`);
                 slider.addEventListener('input', () => {
                     if (slider.id === 'emotion') {
@@ -383,384 +690,155 @@
                     }
                 });
             });
-
-            // Добавление нового трека
-            document.getElementById('add-track').addEventListener('click', async function() {
-                const trackTitle = document.getElementById('track-title').value.trim();
-                const trackArtist = document.getElementById('track-artist').value.trim();
-                
-                if (!trackTitle || !trackArtist) {
-                    alert('Введите название трека и исполнителя');
-                    return;
-                }
-
-                const trackId = `${trackArtist.toLowerCase()}_${trackTitle.toLowerCase()}`.replace(/[^a-z0-9_]/g, '_');
-                
-                try {
-                    // Проверяем, существует ли уже такой трек
-                    const existingTrack = allTracks.find(t => t.id === trackId);
-                    if (existingTrack) {
-                        selectTrack(existingTrack);
-                        return;
-                    }
-
-                    // Создаем новый трек
-                    await db.collection('tracks').doc(trackId).set({
-                        title: trackTitle,
-                        artist: trackArtist,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        createdBy: currentUser.uid
-                    });
-
-                    // Выбираем созданный трек для оценки
-                    const newTrack = {
-                        id: trackId,
-                        title: trackTitle,
-                        artist: trackArtist
-                    };
-                    
-                    selectTrack(newTrack);
-                    loadAllTracks();
-
-                } catch (error) {
-                    console.error("Ошибка создания трека:", error);
-                    alert('Ошибка при создании трека');
-                }
-            });
-
-            // Выбор трека для оценки
-            function selectTrack(track) {
-                selectedTrack = track;
-                
-                document.getElementById('selected-track-info').style.display = 'block';
-                document.getElementById('current-track-display').innerHTML = `
-                    <strong>${track.title}</strong> - ${track.artist}
-                `;
-                
-                document.getElementById('add-track-form').style.display = 'none';
-                document.getElementById('rating-form').style.display = 'block';
-                
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                document.querySelector('.tab[data-tab="rate"]').classList.add('active');
-                document.getElementById('rate-tab').classList.add('active');
+            
+            showPage('track');
+        }
+        
+        // Отправка оценки
+        async function submitRating() {
+            if (!currentUser) {
+                alert('Подождите, идет авторизация...');
+                return;
             }
-
-            // Кнопка сброса выбранного трека
-            document.getElementById('change-track').addEventListener('click', function() {
-                resetRatingForm();
-            });
-
-            // Публикация оценки
-            document.getElementById('submit-rating').addEventListener('click', async function() {
-                if (!selectedTrack || !currentUser) {
-                    alert('Выберите трек для оценки');
-                    return;
-                }
-
-                const melody = parseInt(document.getElementById('melody').value);
-                const rhythm = parseInt(document.getElementById('rhythm').value);
-                const lyrics = parseInt(document.getElementById('lyrics').value);
-                const originality = parseInt(document.getElementById('originality').value);
-                const emotionMultiplier = parseFloat(document.getElementById('emotion').value);
-
-                const sum = melody + rhythm + lyrics + originality;
-                const totalScore = Math.min(Math.round(sum * emotionMultiplier * 1.125), 90);
-
-                try {
-                    // Сохраняем оценку
+            
+            const melody = parseInt(document.getElementById('melody').value);
+            const rhythm = parseInt(document.getElementById('rhythm').value);
+            const lyrics = parseInt(document.getElementById('lyrics').value);
+            const originality = parseInt(document.getElementById('originality').value);
+            const emotionMultiplier = parseFloat(document.getElementById('emotion').value);
+            
+            const sum = melody + rhythm + lyrics + originality;
+            const totalScore = Math.min(Math.round(sum * emotionMultiplier * 2.25), 90);
+            
+            try {
+                // Проверяем, есть ли уже оценка
+                const existingSnapshot = await db.collection('ratings')
+                    .where('trackId', '==', currentTrack.id)
+                    .where('userId', '==', currentUser.uid)
+                    .get();
+                
+                if (!existingSnapshot.empty) {
+                    // Обновляем существующую
+                    existingSnapshot.forEach(doc => {
+                        db.collection('ratings').doc(doc.id).update({
+                            scores: { melody, rhythm, lyrics, originality, emotionMultiplier },
+                            totalScore: totalScore,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    });
+                } else {
+                    // Создаем новую
                     await db.collection('ratings').add({
-                        trackId: selectedTrack.id,
-                        trackTitle: selectedTrack.title,
-                        trackArtist: selectedTrack.artist,
+                        trackId: currentTrack.id,
+                        trackTitle: currentTrack.title,
+                        trackArtist: currentTrack.artist,
                         userId: currentUser.uid,
                         scores: { melody, rhythm, lyrics, originality, emotionMultiplier },
                         totalScore: totalScore,
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
-
-                    // Показываем результаты
-                    showResults({
-                        title: selectedTrack.title,
-                        artist: selectedTrack.artist,
-                        total: totalScore,
-                        scores: { melody, rhythm, lyrics, originality, emotionMultiplier }
-                    });
-
-                    // Обновляем списки
-                    loadAllTracks();
-                    loadCommunityTracks();
-                    loadUserTracks();
-
-                } catch (error) {
-                    console.error("Ошибка сохранения:", error);
-                    alert('Ошибка при сохранении оценки');
                 }
-            });
-
-            // Кнопка "Оценить другой трек"
-            document.getElementById('rate-another').addEventListener('click', function() {
-                document.getElementById('results').classList.add('hidden');
-                resetRatingForm();
-                document.querySelector('.tab[data-tab="browse"]').click();
-            });
-
-            // Кнопка обновления рейтингов
-            document.getElementById('refresh-ratings').addEventListener('click', function() {
-                loadCommunityTracks();
-            });
-
-            // Функция сброса формы
-            function resetRatingForm() {
-                selectedTrack = null;
-                document.getElementById('selected-track-info').style.display = 'none';
-                document.getElementById('add-track-form').style.display = 'block';
-                document.getElementById('rating-form').style.display = 'none';
-                document.getElementById('track-title').value = '';
-                document.getElementById('track-artist').value = '';
                 
-                sliders.forEach(slider => {
-                    if (slider.id === 'emotion') {
-                        slider.value = 1;
-                        document.getElementById(`${slider.id}-value`).textContent = '×1.0';
-                    } else {
-                        slider.value = 5;
-                        document.getElementById(`${slider.id}-value`).textContent = '5';
-                    }
-                });
-            }
-
-            // Загрузка всех треков
-            async function loadAllTracks() {
-                const allTracksList = document.getElementById('all-tracks-list');
-                allTracksList.innerHTML = '<p>Загрузка треков...</p>';
-
-                try {
-                    const tracksSnapshot = await db.collection('tracks').orderBy('createdAt', 'desc').get();
-                    allTracks = [];
-                    
-                    tracksSnapshot.forEach(doc => {
-                        allTracks.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
-                    });
-
-                    let userRatings = [];
-                    if (currentUser) {
-                        const ratingsSnapshot = await db.collection('ratings')
-                            .where('userId', '==', currentUser.uid)
-                            .get();
-                        userRatings = ratingsSnapshot.docs.map(doc => doc.data());
-                    }
-
-                    allTracksList.innerHTML = '';
-                    allTracks.forEach(track => {
-                        const userRating = userRatings.find(r => r.trackId === track.id);
-                        const trackElement = document.createElement('div');
-                        trackElement.className = `track-item ${userRating ? 'rated' : ''}`;
-                        trackElement.innerHTML = `
-                            <div class="track-header">
-                                <div class="track-title">${track.title} - ${track.artist}</div>
-                                ${userRating ? `
-                                    <div class="community-score">${userRating.totalScore}/90</div>
-                                ` : ''}
-                            </div>
-                            ${userRating ? `
-                                <div class="user-rating">
-                                    <strong>Ваша оценка:</strong> ${userRating.totalScore}/90
-                                    <br>Нажмите, чтобы оценить заново
-                                </div>
-                            ` : `
-                                <div class="rating-count">Нажмите, чтобы оценить этот трек</div>
-                            `}
-                        `;
-                        
-                        trackElement.addEventListener('click', () => selectTrack(track));
-                        allTracksList.appendChild(trackElement);
-                    });
-
-                } catch (error) {
-                    console.error("Ошибка загрузки треков:", error);
-                    allTracksList.innerHTML = '<p>Ошибка загрузки треков</p>';
-                }
-            }
-
-            // Загрузка рейтингов сообщества
-            async function loadCommunityTracks() {
-                const communityTracks = document.getElementById('community-tracks');
-                communityTracks.innerHTML = '<p>Загрузка...</p>';
-
-                try {
-                    const tracksSnapshot = await db.collection('tracks').get();
-                    const tracksMap = {};
-                    
-                    tracksSnapshot.forEach(doc => {
-                        tracksMap[doc.id] = {
-                            title: doc.data().title,
-                            artist: doc.data().artist
-                        };
-                    });
-
-                    const ratingsSnapshot = await db.collection('ratings').get();
-                    const tracks = {};
-
-                    ratingsSnapshot.forEach(doc => {
-                        const rating = doc.data();
-                        const trackId = rating.trackId;
-                        
-                        if (!tracks[trackId]) {
-                            const trackInfo = tracksMap[trackId] || {
-                                title: rating.trackTitle || 'Неизвестный трек',
-                                artist: rating.trackArtist || 'Неизвестный исполнитель'
-                            };
-                            
-                            tracks[trackId] = {
-                                title: trackInfo.title,
-                                artist: trackInfo.artist,
-                                ratings: [],
-                                totalScores: []
-                            };
-                        }
-                        tracks[trackId].ratings.push(rating);
-                        tracks[trackId].totalScores.push(rating.totalScore);
-                    });
-
-                    const sortedTracks = Object.values(tracks).sort((a, b) => {
-                        const avgA = a.totalScores.reduce((sum, score) => sum + score, 0) / a.totalScores.length;
-                        const avgB = b.totalScores.reduce((sum, score) => sum + score, 0) / b.totalScores.length;
-                        return avgB - avgA;
-                    });
-
-                    communityTracks.innerHTML = '';
-                    
-                    if (sortedTracks.length === 0) {
-                        communityTracks.innerHTML = '<p>Пока нет оцененных треков</p>';
-                        return;
-                    }
-
-                    sortedTracks.forEach(track => {
-                        const avgScore = (track.totalScores.reduce((sum, score) => sum + score, 0) / track.totalScores.length).toFixed(1);
-                        const userRating = track.ratings.find(r => r.userId === currentUser?.uid);
-                        
-                        const trackElement = document.createElement('div');
-                        trackElement.className = 'track-item';
-                        trackElement.innerHTML = `
-                            <div class="track-header">
-                                <div class="track-title">${track.title} - ${track.artist}</div>
-                                <div class="community-score">${avgScore}/90</div>
-                            </div>
-                            <div class="rating-count">Оценок: ${track.ratings.length}</div>
-                            ${userRating ? `
-                                <div class="user-rating">
-                                    <strong>Ваша оценка:</strong> ${userRating.totalScore}/90
-                                </div>
-                            ` : `
-                                <button onclick="selectTrackByTitle('${track.title}', '${track.artist}')" 
-                                        style="background: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-top: 8px;">
-                                    Оценить этот трек
-                                </button>
-                            `}
-                        `;
-                        communityTracks.appendChild(trackElement);
-                    });
-
-                } catch (error) {
-                    console.error("Ошибка загрузки:", error);
-                    communityTracks.innerHTML = '<p>Ошибка загрузки данных</p>';
-                }
-            }
-
-            // Загрузка оценок пользователя
-            async function loadUserTracks() {
-                if (!currentUser) return;
-
-                const userTracksList = document.getElementById('user-tracks-list');
-                userTracksList.innerHTML = '<p>Загрузка...</p>';
-
-                try {
-                    const snapshot = await db.collection('ratings')
-                        .where('userId', '==', currentUser.uid)
-                        .orderBy('timestamp', 'desc')
-                        .get();
-
-                    userTracksList.innerHTML = '';
-                    
-                    if (snapshot.empty) {
-                        userTracksList.innerHTML = '<p>Вы ещё не оценили ни одного трека</p>';
-                        return;
-                    }
-
-                    snapshot.forEach(doc => {
-                        const rating = doc.data();
-                        const trackElement = document.createElement('div');
-                        trackElement.className = 'track-item';
-                        trackElement.innerHTML = `
-                            <div class="track-header">
-                                <div class="track-title">${rating.trackTitle} - ${rating.trackArtist}</div>
-                                <div class="community-score">${rating.totalScore}/90</div>
-                            </div>
-                            <div class="user-rating">
-                                Рифмы/образы: ${rating.scores.melody}/10, 
-                                Структура/ритмика: ${rating.scores.rhythm}/10, 
-                                Реализация стиля: ${rating.scores.lyrics}/10, 
-                                Индивидуальность/харизма: ${rating.scores.originality}/10,
-                                Множитель: ×${rating.scores.emotionMultiplier.toFixed(1)}
-                            </div>
-                            <button onclick="selectTrackByTitle('${rating.trackTitle}', '${rating.trackArtist}')" 
-                                    style="background: #2196F3; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-top: 8px;">
-                                Оценить заново
-                            </button>
-                        `;
-                        userTracksList.appendChild(trackElement);
-                    });
-
-                } catch (error) {
-                    console.error("Ошибка загрузки:", error);
-                    userTracksList.innerHTML = '<p>Ошибка загрузки данных</p>';
-                }
-            }
-
-            // Показать результаты
-            function showResults(rating) {
-                document.getElementById('track-info-result').innerHTML = `
-                    <p><strong>Трек:</strong> ${rating.title}</p>
-                    <p><strong>Исполнитель:</strong> ${rating.artist}</p>
-                `;
-
-                document.getElementById('total-score').textContent = `${rating.total}/90`;
+                alert('Оценка сохранена!');
+                showTrack(currentTrack.id, currentTrack.title, currentTrack.artist);
+                loadPopularTracks();
+                loadMyRatings();
                 
-                document.getElementById('criteria-scores').innerHTML = `
-                    <p><strong>Детализация:</strong></p>
-                    <ul>
-                        <li>Рифмы/образы: ${rating.scores.melody}/10</li>
-                        <li>Структура/ритмика: ${rating.scores.rhythm}/10</li>
-                        <li>Реализация стиля: ${rating.scores.lyrics}/10</li>
-                        <li>Индивидуальность/харизма: ${rating.scores.originality}/10</li>
-                        <li>Множитель: ×${rating.scores.emotionMultiplier.toFixed(1)}</li>
-                    </ul>
-                `;
-
-                document.getElementById('results').classList.remove('hidden');
-                document.getElementById('rating-form').style.display = 'none';
+            } catch (error) {
+                console.error("Ошибка:", error);
+                alert('Ошибка при сохранении оценки');
             }
-
-            // Глобальная функция для выбора трека по названию
-            window.selectTrackByTitle = function(title, artist) {
-                const trackId = `${artist.toLowerCase()}_${title.toLowerCase()}`.replace(/[^a-z0-9_]/g, '_');
-                const track = allTracks.find(t => t.id === trackId);
-                if (track) {
-                    selectTrack(track);
-                } else {
-                    const newTrack = {
-                        id: trackId,
-                        title: title,
-                        artist: artist
-                    };
-                    selectTrack(newTrack);
-                }
-            };
-        });
+        }
+        
+        // Загрузка моих оценок
+        async function loadMyRatings() {
+            if (!currentUser) return;
+            
+            const ratingsSnapshot = await db.collection('ratings')
+                .where('userId', '==', currentUser.uid)
+                .orderBy('timestamp', 'desc')
+                .get();
+            
+            const container = document.getElementById('my-ratings-list');
+            container.innerHTML = '';
+            
+            ratingsSnapshot.forEach(doc => {
+                const rating = doc.data();
+                const ratingCard = document.createElement('div');
+                ratingCard.className = 'album-card';
+                ratingCard.onclick = () => showTrack(rating.trackId, rating.trackTitle, rating.trackArtist);
+                ratingCard.innerHTML = `
+                    <div class="album-cover">⭐</div>
+                    <div class="album-info">
+                        <div class="album-title">${rating.trackTitle}</div>
+                        <div class="album-artist">${rating.trackArtist}</div>
+                        <div class="album-stats">Ваша оценка: ${rating.totalScore}/90</div>
+                    </div>
+                `;
+                container.appendChild(ratingCard);
+            });
+            
+            if (ratingsSnapshot.empty) {
+                container.innerHTML = '<p style="color: white;">Вы еще не оценили ни одного трека</p>';
+            }
+        }
+        
+        // Аудиоплеер
+        function togglePlay(btn) {
+            const audio = document.getElementById('audio-player');
+            if (audio.paused) {
+                audio.play();
+                btn.textContent = '⏸';
+            } else {
+                audio.pause();
+                btn.textContent = '▶';
+            }
+        }
+        
+        // Навигация
+        function showPage(page) {
+            document.getElementById('home-page').classList.add('hidden');
+            document.getElementById('albums-page').classList.add('hidden');
+            document.getElementById('track-page').classList.add('hidden');
+            document.getElementById('my-ratings-page').classList.add('hidden');
+            
+            document.getElementById(`${page}-page`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            
+            if (page === 'home') {
+                loadPopularTracks();
+                loadAlbums().then(albums => displayAlbums(albums.slice(0, 3), 'latest-albums'));
+            } else if (page === 'albums') {
+                loadAlbums().then(albums => displayAlbums(albums, 'all-albums'));
+            } else if (page === 'my-ratings') {
+                loadMyRatings();
+            }
+        }
+        
+        function goBack() {
+            const currentPage = document.querySelector('.nav-link.active').dataset.page;
+            showPage(currentPage);
+        }
+        
+        // Инициализация
+        auth.signInAnonymously()
+            .then((userCredential) => {
+                currentUser = userCredential.user;
+                initSampleData();
+                loadPopularTracks();
+                loadAlbums().then(albums => displayAlbums(albums.slice(0, 3), 'latest-albums'));
+            })
+            .catch((error) => console.error("Ошибка:", error));
+        
+        // Делаем функции глобальными
+        window.showPage = showPage;
+        window.showAlbum = showAlbum;
+        window.showTrack = showTrack;
+        window.submitRating = submitRating;
+        window.togglePlay = togglePlay;
+        window.goBack = goBack;
     </script>
 </body>
 </html>
