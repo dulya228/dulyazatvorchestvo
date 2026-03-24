@@ -269,6 +269,10 @@
             font-size: 64px;
         }
         
+        .track-info-large {
+            flex: 1;
+        }
+        
         .track-title-large {
             font-size: 32px;
             font-weight: bold;
@@ -287,10 +291,16 @@
         }
         
         .audio-player {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .audio-player h3 {
+            margin-bottom: 15px;
+            color: #333;
         }
         
         .player-controls {
@@ -309,6 +319,11 @@
             color: white;
             font-size: 24px;
             cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.05);
         }
         
         .time-info {
@@ -318,6 +333,27 @@
             background: white;
             padding: 8px 16px;
             border-radius: 20px;
+            color: #667eea;
+        }
+        
+        audio {
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .audio-url-input {
+            margin-top: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .audio-url-input:focus {
+            outline: none;
+            border-color: #667eea;
         }
         
         .rating-form {
@@ -422,6 +458,10 @@
             cursor: pointer;
         }
         
+        .chart-item:hover {
+            background: #e8e9ff;
+        }
+        
         .chart-position {
             width: 50px;
             text-align: center;
@@ -448,6 +488,9 @@
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
+            }
+            .player-controls {
+                justify-content: center;
             }
         }
     </style>
@@ -549,6 +592,10 @@
                                     <label>Длительность</label>
                                     <input type="text" class="track-duration-input" placeholder="3:45">
                                 </div>
+                                <div class="form-group">
+                                    <label>🎵 Ссылка на аудио (MP3)</label>
+                                    <input type="text" class="track-audio-input" placeholder="https://example.com/song.mp3">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -573,6 +620,7 @@
         let currentUser = null;
         let currentTrack = null;
         let isAdmin = false;
+        let currentAudio = null;
         let db, auth;
         
         // Конфигурация
@@ -585,12 +633,11 @@
             appId: "1:711700746757:web:9e2c55939ef87b5a49026c"
         };
         
-        // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
         auth = firebase.auth();
         
-        const ADMIN_UID = "5D4tqE6ITuRLT9RVOTR7lxGqc9w1"; // Замените на ваш UID
+        const ADMIN_UID = "5D4tqE6ITuRLT9RVOTR7lxGqc9w1";
         
         // Вспомогательные функции
         function escapeHtml(str) {
@@ -603,8 +650,7 @@
             });
         }
         
-        // ============ ОСНОВНЫЕ ФУНКЦИИ ============
-        
+        // Получение всех треков
         async function getAllTracksWithRatings() {
             const albumsSnapshot = await db.collection('albums').get();
             const allTracks = [];
@@ -629,7 +675,8 @@
                             title: track.title,
                             artist: album.artist,
                             avgScore: avgScore,
-                            ratingsCount: ratings.length
+                            ratingsCount: ratings.length,
+                            audioUrl: track.audioUrl || null
                         });
                     }
                 }
@@ -836,7 +883,11 @@
                     ${album.tracks?.map(track => `
                         <div style="padding: 15px; border-bottom: 1px solid #e0e0e0; cursor: pointer;" onclick="window.showTrack('${track.id}', '${escapeHtml(track.title)}', '${escapeHtml(album.artist)}')">
                             <div style="display: flex; justify-content: space-between;">
-                                <div><strong>${escapeHtml(track.title)}</strong><br><small>${track.duration || '—'}</small></div>
+                                <div>
+                                    <strong>${escapeHtml(track.title)}</strong>
+                                    ${track.audioUrl ? '<span style="color: #4CAF50;"> 🔊</span>' : ''}
+                                    <br><small>${track.duration || '—'}</small>
+                                </div>
                                 <div>▶</div>
                             </div>
                         </div>
@@ -848,10 +899,24 @@
             showPage('track');
         }
         
-        // ПОКАЗАТЬ ТРЕК (ГЛАВНАЯ ФУНКЦИЯ)
+        // ПОКАЗАТЬ ТРЕК С АУДИОПЛЕЕРОМ
         async function showTrack(trackId, trackTitle, trackArtist) {
             console.log('showTrack вызван:', trackId, trackTitle);
             currentTrack = { id: trackId, title: trackTitle, artist: trackArtist };
+            
+            // Находим аудио URL из альбома
+            let audioUrl = null;
+            const albumsSnapshot = await db.collection('albums').get();
+            for (const albumDoc of albumsSnapshot.docs) {
+                const album = albumDoc.data();
+                if (album.tracks) {
+                    const track = album.tracks.find(t => t.id === trackId);
+                    if (track && track.audioUrl) {
+                        audioUrl = track.audioUrl;
+                        break;
+                    }
+                }
+            }
             
             // Получаем оценки
             const ratingsSnapshot = await db.collection('ratings').where('trackId', '==', trackId).get();
@@ -879,14 +944,27 @@
                     </div>
                 </div>
                 
+                <!-- АУДИОПЛЕЕР -->
                 <div class="audio-player">
-                    <h3>🎧 Аудиоплеер</h3>
+                    <h3>🎧 Слушать трек</h3>
                     <div class="player-controls">
                         <button class="play-btn" id="play-btn">▶</button>
                         <div class="time-info" id="time-info">00:00 / 00:00</div>
                     </div>
-                    <audio id="audio-player" style="display: none;"></audio>
-                    <p style="margin-top: 10px; font-size: 12px; color: #999;">Добавьте аудиофайл в Firebase Storage</p>
+                    <audio id="audio-player" preload="metadata" ${audioUrl ? `src="${audioUrl}"` : ''}></audio>
+                    ${audioUrl ? `
+                        <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                            🔊 Источник: <a href="${audioUrl}" target="_blank" style="color: #667eea;">${audioUrl.substring(0, 50)}...</a>
+                        </div>
+                    ` : `
+                        <div style="margin-top: 10px; font-size: 12px; color: #ff9800;">
+                            ⚠️ Аудиофайл не добавлен. Администратор может добавить ссылку ниже.
+                        </div>
+                        ${isAdmin ? `
+                            <input type="text" id="audio-url-input" class="audio-url-input" placeholder="Вставьте ссылку на MP3 файл (Google Drive, Yandex Disk, или любой хостинг)">
+                            <button id="save-audio-url" class="submit-rating-btn" style="margin-top: 10px; background: #ff9800;">💾 Сохранить ссылку на аудио</button>
+                        ` : ''}
+                    `}
                 </div>
                 
                 <div class="rating-form">
@@ -943,6 +1021,81 @@
                     };
                 }
             });
+            
+            // Настройка аудиоплеера
+            const audio = document.getElementById('audio-player');
+            const playBtn = document.getElementById('play-btn');
+            const timeInfo = document.getElementById('time-info');
+            
+            if (audio && playBtn) {
+                if (audioUrl) {
+                    audio.addEventListener('loadedmetadata', () => {
+                        const minutes = Math.floor(audio.duration / 60);
+                        const seconds = Math.floor(audio.duration % 60);
+                        timeInfo.textContent = `00:00 / ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    });
+                    
+                    audio.addEventListener('timeupdate', () => {
+                        const currentMin = Math.floor(audio.currentTime / 60);
+                        const currentSec = Math.floor(audio.currentTime % 60);
+                        const totalMin = Math.floor(audio.duration / 60);
+                        const totalSec = Math.floor(audio.duration % 60);
+                        timeInfo.textContent = `${currentMin}:${currentSec.toString().padStart(2, '0')} / ${totalMin}:${totalSec.toString().padStart(2, '0')}`;
+                    });
+                    
+                    audio.addEventListener('ended', () => {
+                        playBtn.textContent = '▶';
+                    });
+                    
+                    playBtn.onclick = () => {
+                        if (audio.paused) {
+                            audio.play();
+                            playBtn.textContent = '⏸';
+                        } else {
+                            audio.pause();
+                            playBtn.textContent = '▶';
+                        }
+                    };
+                } else {
+                    playBtn.disabled = true;
+                    playBtn.style.opacity = '0.5';
+                    playBtn.style.cursor = 'not-allowed';
+                    timeInfo.textContent = '00:00 / 00:00 (нет аудио)';
+                }
+            }
+            
+            // Сохранение аудио URL для админа
+            const saveAudioBtn = document.getElementById('save-audio-url');
+            if (saveAudioBtn) {
+                saveAudioBtn.onclick = async () => {
+                    const newUrl = document.getElementById('audio-url-input').value.trim();
+                    if (!newUrl) {
+                        alert('Введите ссылку на аудиофайл');
+                        return;
+                    }
+                    
+                    try {
+                        const albumsSnapshot = await db.collection('albums').get();
+                        for (const albumDoc of albumsSnapshot.docs) {
+                            const album = albumDoc.data();
+                            if (album.tracks) {
+                                const trackIndex = album.tracks.findIndex(t => t.id === trackId);
+                                if (trackIndex !== -1) {
+                                    const updatedTracks = [...album.tracks];
+                                    updatedTracks[trackIndex] = { ...updatedTracks[trackIndex], audioUrl: newUrl };
+                                    await db.collection('albums').doc(albumDoc.id).update({ tracks: updatedTracks });
+                                    alert('✅ Ссылка на аудио сохранена! Обновите страницу, чтобы послушать.');
+                                    showTrack(trackId, trackTitle, trackArtist);
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                        alert('Ошибка при сохранении');
+                    }
+                };
+            }
             
             document.getElementById('back-from-track').onclick = () => {
                 const active = document.querySelector('.nav-link.active')?.dataset.page || 'home';
@@ -1066,6 +1219,10 @@
                         <label>Длительность</label>
                         <input type="text" class="track-duration-input" placeholder="3:45">
                     </div>
+                    <div class="form-group">
+                        <label>🎵 Ссылка на аудио (MP3)</label>
+                        <input type="text" class="track-audio-input" placeholder="https://example.com/song.mp3">
+                    </div>
                 </div>
             `;
             container.appendChild(trackDiv);
@@ -1099,6 +1256,7 @@
             for (let i = 0; i < trackInputs.length; i++) {
                 const titleInput = trackInputs[i].querySelector('.track-title-input');
                 const durationInput = trackInputs[i].querySelector('.track-duration-input');
+                const audioInput = trackInputs[i].querySelector('.track-audio-input');
                 
                 const trackTitle = titleInput.value.trim();
                 if (!trackTitle) {
@@ -1110,7 +1268,7 @@
                     id: `${artist.toLowerCase()}_${title.toLowerCase()}_${i}`.replace(/[^a-z0-9_]/g, '_'),
                     title: trackTitle,
                     duration: durationInput.value.trim() || '3:30',
-                    audioUrl: ""
+                    audioUrl: audioInput?.value.trim() || ""
                 });
             }
             
@@ -1148,6 +1306,10 @@
                             <div class="form-group">
                                 <label>Длительность</label>
                                 <input type="text" class="track-duration-input" placeholder="3:45">
+                            </div>
+                            <div class="form-group">
+                                <label>🎵 Ссылка на аудио (MP3)</label>
+                                <input type="text" class="track-audio-input" placeholder="https://example.com/song.mp3">
                             </div>
                         </div>
                     </div>
@@ -1247,7 +1409,6 @@
             showPage('home');
         });
         
-        // Делаем функции глобальными для onclick
         window.showTrack = showTrack;
         window.showAlbum = showAlbum;
         window.addTrackField = addTrackField;
