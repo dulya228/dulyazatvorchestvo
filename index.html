@@ -1151,7 +1151,7 @@
             const emotion = parseFloat(document.getElementById('emotion').value);
             
             const sum = melody + rhythm + lyrics + originality;
-            const totalScore = Math.min(Math.round(sum * emotion * 2.25), 90);
+            const totalScore = Math.min(Math.round(sum * emotion * 1.125), 90);
             
             try {
                 const existing = await db.collection('ratings')
