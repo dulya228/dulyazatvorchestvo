@@ -308,6 +308,7 @@
             align-items: center;
             gap: 20px;
             flex-wrap: wrap;
+            margin-bottom: 15px;
         }
         
         .play-btn {
@@ -338,7 +339,7 @@
         
         audio {
             width: 100%;
-            margin-top: 15px;
+            margin-top: 10px;
         }
         
         .audio-url-input {
@@ -616,14 +617,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 
     <script>
-        // Глобальные переменные
-        let currentUser = null;
-        let currentTrack = null;
-        let isAdmin = false;
-        let currentAudio = null;
-        let db, auth;
-        
-        // Конфигурация
+        // Конфигурация Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCfMUhNeaty-xjfXq8NlmnEcozI0eoI19c",
             authDomain: "dulyazatvorchestvo.firebaseapp.com",
@@ -634,10 +628,15 @@
         };
         
         firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        auth = firebase.auth();
+        const db = firebase.firestore();
+        const auth = firebase.auth();
         
+        // ВАШ UID (замените на свой)
         const ADMIN_UID = "5D4tqE6ITuRLT9RVOTR7lxGqc9w1";
+        
+        let currentUser = null;
+        let currentTrack = null;
+        let isAdmin = false;
         
         // Вспомогательные функции
         function escapeHtml(str) {
@@ -650,7 +649,7 @@
             });
         }
         
-        // Получение всех треков
+        // Получение всех треков с оценками
         async function getAllTracksWithRatings() {
             const albumsSnapshot = await db.collection('albums').get();
             const allTracks = [];
@@ -684,7 +683,7 @@
             return allTracks;
         }
         
-        // Отображение страницы
+        // Навигация
         function showPage(page) {
             const pages = ['home', 'chart', 'albums', 'track', 'my-ratings', 'admin'];
             pages.forEach(p => {
@@ -899,24 +898,28 @@
             showPage('track');
         }
         
-        // ПОКАЗАТЬ ТРЕК С АУДИОПЛЕЕРОМ
+        // ============ ПОКАЗАТЬ ТРЕК (ИСПРАВЛЕННАЯ ВЕРСИЯ) ============
         async function showTrack(trackId, trackTitle, trackArtist) {
             console.log('showTrack вызван:', trackId, trackTitle);
             currentTrack = { id: trackId, title: trackTitle, artist: trackArtist };
             
             // Находим аудио URL из альбома
             let audioUrl = null;
+            let foundAlbumId = null;
             const albumsSnapshot = await db.collection('albums').get();
             for (const albumDoc of albumsSnapshot.docs) {
                 const album = albumDoc.data();
                 if (album.tracks) {
                     const track = album.tracks.find(t => t.id === trackId);
-                    if (track && track.audioUrl) {
-                        audioUrl = track.audioUrl;
+                    if (track) {
+                        audioUrl = track.audioUrl || null;
+                        foundAlbumId = albumDoc.id;
                         break;
                     }
                 }
             }
+            
+            console.log('Найден audioUrl:', audioUrl);
             
             // Получаем оценки
             const ratingsSnapshot = await db.collection('ratings').where('trackId', '==', trackId).get();
@@ -951,20 +954,22 @@
                         <button class="play-btn" id="play-btn">▶</button>
                         <div class="time-info" id="time-info">00:00 / 00:00</div>
                     </div>
-                    <audio id="audio-player" preload="metadata" ${audioUrl ? `src="${audioUrl}"` : ''}></audio>
+                    <audio id="audio-player" preload="metadata" style="width: 100%;"></audio>
                     ${audioUrl ? `
-                        <div style="margin-top: 10px; font-size: 12px; color: #666;">
-                            🔊 Источник: <a href="${audioUrl}" target="_blank" style="color: #667eea;">${audioUrl.substring(0, 50)}...</a>
+                        <div style="margin-top: 10px; font-size: 12px; color: #4CAF50;">
+                            🔊 Аудио доступно
                         </div>
                     ` : `
                         <div style="margin-top: 10px; font-size: 12px; color: #ff9800;">
                             ⚠️ Аудиофайл не добавлен. Администратор может добавить ссылку ниже.
                         </div>
-                        ${isAdmin ? `
-                            <input type="text" id="audio-url-input" class="audio-url-input" placeholder="Вставьте ссылку на MP3 файл (Google Drive, Yandex Disk, или любой хостинг)">
-                            <button id="save-audio-url" class="submit-rating-btn" style="margin-top: 10px; background: #ff9800;">💾 Сохранить ссылку на аудио</button>
-                        ` : ''}
                     `}
+                    ${isAdmin ? `
+                        <div style="margin-top: 15px;">
+                            <input type="text" id="audio-url-input" class="audio-url-input" placeholder="Вставьте прямую ссылку на MP3 файл (например: https://pixeldrain.com/api/file/XXXX)" value="${audioUrl || ''}">
+                            <button id="save-audio-url" class="submit-rating-btn" style="margin-top: 10px; background: #ff9800;">💾 Сохранить ссылку на аудио</button>
+                        </div>
+                    ` : ''}
                 </div>
                 
                 <div class="rating-form">
@@ -1022,25 +1027,46 @@
                 }
             });
             
-            // Настройка аудиоплеера
+            // ============ НАСТРОЙКА АУДИОПЛЕЕРА (ИСПРАВЛЕНО) ============
             const audio = document.getElementById('audio-player');
             const playBtn = document.getElementById('play-btn');
             const timeInfo = document.getElementById('time-info');
             
             if (audio && playBtn) {
-                if (audioUrl) {
+                if (audioUrl && audioUrl.trim() !== '') {
+                    console.log('Устанавливаем src:', audioUrl);
+                    audio.src = audioUrl;
+                    audio.load(); // Принудительная загрузка
+                    
+                    // Ждем загрузки метаданных
                     audio.addEventListener('loadedmetadata', () => {
-                        const minutes = Math.floor(audio.duration / 60);
-                        const seconds = Math.floor(audio.duration % 60);
-                        timeInfo.textContent = `00:00 / ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        if (!isNaN(audio.duration) && audio.duration !== Infinity) {
+                            const minutes = Math.floor(audio.duration / 60);
+                            const seconds = Math.floor(audio.duration % 60);
+                            timeInfo.textContent = `00:00 / ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                            console.log('Аудио загружено, длительность:', audio.duration);
+                        } else {
+                            console.warn('Не удалось получить длительность');
+                            timeInfo.textContent = '00:00 / ??:??';
+                        }
+                    });
+                    
+                    audio.addEventListener('error', (e) => {
+                        console.error('Ошибка загрузки аудио:', e);
+                        console.error('src:', audio.src);
+                        timeInfo.textContent = 'Ошибка загрузки';
+                        playBtn.disabled = true;
+                        playBtn.style.opacity = '0.5';
                     });
                     
                     audio.addEventListener('timeupdate', () => {
-                        const currentMin = Math.floor(audio.currentTime / 60);
-                        const currentSec = Math.floor(audio.currentTime % 60);
-                        const totalMin = Math.floor(audio.duration / 60);
-                        const totalSec = Math.floor(audio.duration % 60);
-                        timeInfo.textContent = `${currentMin}:${currentSec.toString().padStart(2, '0')} / ${totalMin}:${totalSec.toString().padStart(2, '0')}`;
+                        if (!isNaN(audio.duration) && audio.duration !== Infinity && audio.duration > 0) {
+                            const currentMin = Math.floor(audio.currentTime / 60);
+                            const currentSec = Math.floor(audio.currentTime % 60);
+                            const totalMin = Math.floor(audio.duration / 60);
+                            const totalSec = Math.floor(audio.duration % 60);
+                            timeInfo.textContent = `${currentMin}:${currentSec.toString().padStart(2, '0')} / ${totalMin}:${totalSec.toString().padStart(2, '0')}`;
+                        }
                     });
                     
                     audio.addEventListener('ended', () => {
@@ -1049,14 +1075,19 @@
                     
                     playBtn.onclick = () => {
                         if (audio.paused) {
-                            audio.play();
+                            audio.play().catch(e => console.error('Ошибка воспроизведения:', e));
                             playBtn.textContent = '⏸';
                         } else {
                             audio.pause();
                             playBtn.textContent = '▶';
                         }
                     };
+                    
+                    playBtn.disabled = false;
+                    playBtn.style.opacity = '1';
+                    playBtn.style.cursor = 'pointer';
                 } else {
+                    console.warn('Нет аудио URL');
                     playBtn.disabled = true;
                     playBtn.style.opacity = '0.5';
                     playBtn.style.cursor = 'not-allowed';
@@ -1084,7 +1115,7 @@
                                     const updatedTracks = [...album.tracks];
                                     updatedTracks[trackIndex] = { ...updatedTracks[trackIndex], audioUrl: newUrl };
                                     await db.collection('albums').doc(albumDoc.id).update({ tracks: updatedTracks });
-                                    alert('✅ Ссылка на аудио сохранена! Обновите страницу, чтобы послушать.');
+                                    alert('✅ Ссылка на аудио сохранена!');
                                     showTrack(trackId, trackTitle, trackArtist);
                                     break;
                                 }
@@ -1203,7 +1234,7 @@
             }
         }
         
-        // Админ функции
+        // ============ АДМИН ФУНКЦИИ ============
         function addTrackField() {
             const container = document.getElementById('tracks-container');
             const trackDiv = document.createElement('div');
